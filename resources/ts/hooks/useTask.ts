@@ -94,7 +94,7 @@ export const useTask = () => {
             setTimeout(() => {
                 setLoading(false);
                 setDisabled(false);
-                location.href = "http://localhost:8000";
+                location.reload();
             }, 1000)
         });
     }, []);
