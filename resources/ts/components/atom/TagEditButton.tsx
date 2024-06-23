@@ -13,5 +13,5 @@ type Props = {
 export const TagEditButton: FC<Props> = (props) => {
     const { children, onClick, disabled = false, loading = false, width = "none" } = props;
 
-    return <Button w={width} rightIcon={<SettingsIcon />} size="sm" onClick={onClick} isDisabled={disabled} isLoading={loading} bg="blue.400" _hover={{opacity: 0.7}} color="white">{children}</Button>
+    return <Button w={width} size={{ base: "xs", lg: "sm" }} rightIcon={<SettingsIcon />} onClick={onClick} isDisabled={disabled} isLoading={loading} bg="blue.400" _hover={{opacity: 0.7}} color="white">{children}</Button>
 }

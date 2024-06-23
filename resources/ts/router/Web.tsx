@@ -1,15 +1,17 @@
-import { FC, createContext, memo } from "react";
+import { FC, memo } from "react";
 import { Route, Routes } from "react-router";
 import { TopPage } from "../pages/TopPage";
-import { TagDatasPage } from "../pages/TagDatasPage";
-
-export const QueryContext = createContext("");
+import { ErrorPage } from "../pages/ErrorPage";
+import { TagRouters } from "./TagRouters";
 
 const Web: FC = memo(() => {
     return (
         <Routes>
             <Route index element={<TopPage />} />
-            <Route path="/tags/:tagId" element={<TagDatasPage />} />
+            {TagRouters.map((router) => (
+                <Route key={router.path} path={router.path} element={router.element} />
+            ))}
+            <Route path="*" element={<ErrorPage />} />
         </Routes>
     )
 });

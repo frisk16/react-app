@@ -13,5 +13,5 @@ type Props = {
 export const EditButton: FC<Props> = (props) => {
     const { children, onClick, disabled = false, loading = false, width = "none" } = props;
 
-    return <Button w={width} rightIcon={<EditIcon />} onClick={onClick} isDisabled={disabled} isLoading={loading} bg="blue.400" _hover={{opacity: 0.7}} color="white">{children}</Button>
+    return <Button w={width} size={{ base: "sm", lg: "md" }} rightIcon={<EditIcon />} onClick={onClick} isDisabled={disabled} isLoading={loading} bg="green.400" _hover={{opacity: 0.7}} color="white">{children}</Button>
 }

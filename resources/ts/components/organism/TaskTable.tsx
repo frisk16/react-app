@@ -1,5 +1,5 @@
-import { Box, Card, CardBody, CardFooter, CardHeader, Checkbox, CloseButton, Divider, Flex, FormControl, FormLabel, Heading, Input, Stack, Text } from "@chakra-ui/react";
-import { ChangeEvent, FC, memo, useCallback, useState } from "react";
+import { Box, Card, CardBody, CardFooter, CardHeader, Checkbox, CloseButton, Divider, Flex, FormControl, FormLabel, Input, Stack, Text } from "@chakra-ui/react";
+import { ChangeEvent, FC, memo, useCallback, useEffect, useState } from "react";
 import { Task } from "../../types/api/task";
 import { Tag } from "../../types/api/tag";
 import { DangerButton } from "../atom/DangerButton";
@@ -15,6 +15,7 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { SelectForm } from "../atom/form/SelectForm";
 import { EditButton } from "../atom/EditButton";
 import { TagEditButton } from "../atom/TagEditButton";
+import { TitleText } from "../atom/TitleText";
 
 type Props = {
     csrfToken: string;
@@ -25,6 +26,8 @@ type Props = {
     onOpen: () => void;
     onClose: () => void;
     editTask: ({}) => void;
+    addTask: ({}) => void;
+    deleteSelectedTask: ({}) => void;
     toggleTag: ({}) => void;
     loading: boolean;
     onChangeSearchInput: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -32,11 +35,14 @@ type Props = {
 };
 
 export const TaskTable: FC<Props> = memo((props) => {
-    const { csrfToken, tasks, tags, tagTaskLists, isOpen, onOpen, onClose, editTask, toggleTag, loading, onChangeSearchInput, keyword } = props;
+    const { csrfToken, tasks, tags, tagTaskLists, isOpen, onOpen, onClose, addTask, editTask, deleteSelectedTask, toggleTag, loading, onChangeSearchInput, keyword } = props;
+    
     const [modalStatus, setModalStatus] = useState("");
     const [modalId, setModalId] = useState(0);
-    const { editTitle, editImportance, editCompleted, selectedId, onChangeEditTitle, onChangeEditImportance, onChangeEditCompleted, onChangeCheckbox, setDefaultForms } = useTopForm();
+    const { editTitle, editImportance, editCompleted, selectedId, setSelectedId, onChangeEditTitle, onChangeEditImportance, onChangeEditCompleted, onChangeCheckbox, setDefaultForms } = useTopForm();
     const { targetId, activeForm, onClickToggleForm } = useActiveForm();
+
+    useEffect(() => setSelectedId([]), [tasks]);
 
     const onOpenTaskModal = useCallback((status: string, id?: number) => {
         setModalStatus(status);
@@ -51,11 +57,13 @@ export const TaskTable: FC<Props> = memo((props) => {
 
     return (
         <>
-            <HamburgerIcon as="button" onClick={() => onOpenTaskModal("tagMenu")} fontSize={32} me="auto" ms={8} cursor="pointer" display={{ base: "block", lg: "none" }} />
 
-            <Flex justifyContent="end" me={8} my={{ base: 8, lg: 16 }} gap={4}>
-                {selectedId[0] && <DangerButton onClick={() => onOpenTaskModal("deleteSelectedTask")}>選択項目を削除</DangerButton>}
-                <PrimaryButton onClick={() => onOpenTaskModal("addTask")}>タスク追加</PrimaryButton>
+            <Flex justifyContent={{ base: "space-between", lg: "end" }} me={8} my={{ base: 4, lg: 8 }}>
+                <HamburgerIcon as="button" onClick={() => onOpenTaskModal("tagMenu")} fontSize={28} me="auto" ms={8} cursor="pointer" display={{ base: "block", lg: "none" }} />
+                <Flex gap={2}>
+                    {selectedId[0] && <DangerButton onClick={() => onOpenTaskModal("deleteSelectedTask")}>選択項目を削除</DangerButton>}
+                    <PrimaryButton onClick={() => onOpenTaskModal("addTask")}>タスク追加</PrimaryButton>
+                </Flex>
             </Flex>
             {
                 loading ? (
@@ -63,8 +71,8 @@ export const TaskTable: FC<Props> = memo((props) => {
                 ) : (
                     <>
                         {tasks.map((task) => (
-                            <Box mx={{ base: 4, lg: 12 }}>
-                                <Card mb={4} key={task.id}>
+                            <Box key={task.id} mx={{ base: 4, lg: 12 }}>
+                                <Card mb={4} size={{ base: "sm", lg: "md" }}>
                                     <CardHeader display="flex" justifyContent="space-between">
                                         <Checkbox onChange={onChangeCheckbox} value={task.id} borderColor="gray.500" />
                                         <Text>ID: {task.id}</Text>
@@ -72,7 +80,7 @@ export const TaskTable: FC<Props> = memo((props) => {
                                     <CardBody>
                                         {targetId === task.id && activeForm ? (
                                             <>
-                                                <Stack>
+                                                <Stack spacing={{ base: 0, lg: 1 }}>
                                                     <Input defaultValue={task.title} onChange={onChangeEditTitle} border="none" borderBottom="1px solid #000" borderRadius={0} size="lg" fontWeight="bold"/>
                                                     <FormControl display="flex" alignItems="center" ml={4}>
                                                         <FormLabel m={0} fontWeight="normal">重要度：</FormLabel>
@@ -96,8 +104,8 @@ export const TaskTable: FC<Props> = memo((props) => {
                                             </>
                                         ) : (
                                             <>
-                                                <Stack spacing={6}>
-                                                    <Heading ml={4} size="md">{task.title}</Heading>
+                                                <Stack spacing={{ base: 2, lg: 4 }}>
+                                                    <TitleText>{task.title}</TitleText>
                                                     <FormControl display="flex" alignItems="center" ml={4}>
                                                         <FormLabel m={0} fontWeight="normal">重要度：</FormLabel>
                                                         <Text ml={4}>{task.importance}</Text>
@@ -120,7 +128,7 @@ export const TaskTable: FC<Props> = memo((props) => {
                                     <Divider />
                                     <CardFooter>
                                         <Flex alignItems="center" position="relative" w="100%">
-                                            <Text fontSize="0.8em">タグ一覧：　</Text>
+                                            <Text fontSize="0.8em">タグ：</Text>
                                             <TagLists tags={tags} tagTaskLists={tagTaskLists} taskId={task.id} />
                                             <Box position="absolute" right={0}>
                                                 <TagEditButton onClick={() => onOpenTaskModal("settingTag", task.id)}>タグ編集</TagEditButton>
@@ -141,11 +149,14 @@ export const TaskTable: FC<Props> = memo((props) => {
                 status={modalStatus}
                 id={modalId}
                 csrf={csrfToken}
+                tasks={tasks}
                 tags={tags}
                 tagTaskLists={tagTaskLists}
                 toggleTag={toggleTag}
                 onChangeSearchInput={onChangeSearchInput}
                 keyword={keyword}
+                addTask={addTask}
+                deleteSelectedTask={deleteSelectedTask}
             />
         </>
     )

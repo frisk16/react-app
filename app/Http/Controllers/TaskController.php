@@ -40,13 +40,14 @@ class TaskController extends Controller
             'importance' => 'required'
         ]);
 
-        $task = new Task();
-        $task->title = $request->input('title');
-        $task->importance = $request->input('importance');
-        $task->save();
+        $task = Task::create([
+            'title' => $request->input('title'),
+            'importance' => $request->input('importance')
+        ]);
 
         $response = [
-            'title' => $request->input('title'),
+            'title' => $task->title,
+            'task' => $task
         ];
 
         return response()->json($response);

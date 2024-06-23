@@ -4,13 +4,12 @@ import { MdBuild } from "react-icons/md";
 
 type Props = {
     children: ReactNode;
-    size?: string;
     onClick: () => void;
     disabled?: boolean;
 };
 
 export const SettingButton: FC<Props> = (props) => {
-    const { children, size = "md", onClick, disabled = false } = props;
+    const { children, onClick, disabled = false } = props;
 
-    return <Button leftIcon={<MdBuild />} size={size} colorScheme="blue" onClick={onClick} isDisabled={disabled}>{children}</Button>
+    return <Button rightIcon={<MdBuild />} size={{ base: "sm", lg: "md" }} bg="gray.500" _hover={{ opacity: 0.7 }} color="white" onClick={onClick} isDisabled={disabled}>{children}</Button>
 }

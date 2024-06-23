@@ -26,5 +26,5 @@ export const useTopForm = () => {
         setEditCompleted("");
     }, []);
 
-    return { editTitle, editImportance, editCompleted, selectedId, onChangeEditTitle, onChangeEditImportance, onChangeEditCompleted, onChangeCheckbox, setDefaultForms };
+    return { editTitle, editImportance, editCompleted, selectedId, setSelectedId, onChangeEditTitle, onChangeEditImportance, onChangeEditCompleted, onChangeCheckbox, setDefaultForms };
 }

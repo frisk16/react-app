@@ -1,6 +1,5 @@
 import { Box, Container, FormControl, FormLabel, Input, Stack } from "@chakra-ui/react";
 import { ChangeEvent, FC, memo } from "react";
-import { PrimaryButton } from "../atom/PrimaryButton";
 import { Tag } from "../../types/api/tag";
 import { TagMenuButton } from "../atom/TagMenuButton";
 import { SearchButton } from "../atom/search/SearchButton";
@@ -15,7 +14,7 @@ export const TagListsAside: FC<Props> = memo((props) => {
     const { tags, onChangeSearchInput, keyword } = props;
 
     return (
-        <Container textAlign="center" mt="128px">
+        <Container textAlign="center">
             <Box mb={8}>
                 <FormControl>
                     <FormLabel>タスク検索</FormLabel>

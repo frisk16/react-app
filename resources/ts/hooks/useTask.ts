@@ -15,6 +15,7 @@ type Props = {
     tasks?: Array<Task>;
     keywordParam?: string;
     pageParam?: string;
+    onClose?: () => void;
 };
 
 export const useTask = () => {
@@ -77,25 +78,29 @@ export const useTask = () => {
      * Add Task
      */
     const addTask = useCallback((props: Props) => {
-        const { inputTitle, inputImportance } = props;
+        const { inputTitle, inputImportance, csrf = "", tasks = [] } = props;
 
         setLoading(true);
         setDisabled(true);
         axios.post(`${protocol}//${hostName}/api/tasks/add`, {
             title: inputTitle,
             importance: inputImportance,
+        },{
+            headers: {
+                "X-CSRF-TOKEN": csrf
+            }
         })
-        .then((res) => getMessage({ title: `タスク追加中...：${res.data.title}`, status: "success" }))
+        .then((res) => {
+            setTasks([res.data.task, ...tasks]);
+            getMessage({ title: `タスクを追加中...：${res.data.title}`, status: "success" });
+        })
         .catch((err) => {
             getMessage({ title: "追加時にエラーが発生しました", status: "error" });
             console.log(err);
         })
         .finally(() => {
-            setTimeout(() => {
-                setLoading(false);
-                setDisabled(false);
-                location.reload();
-            }, 1000)
+            setLoading(false);
+            setDisabled(false);
         });
     }, []);
 
@@ -126,8 +131,8 @@ export const useTask = () => {
                     return {
                         id: id,
                         title: inputTitle === "" ? currentTask!.title : inputTitle,
-                        importance: inputImportance === "" ? currentTask!.importance : inputImportance,
-                        completed: inputCompleted === "" ? currentTask?.completed : inputCompleted,
+                        importance: inputImportance === "" ? currentTask!.importance : Number(inputImportance),
+                        completed: inputCompleted === "" ? currentTask?.completed : Number(inputCompleted),
                         created_at: task.created_at,
                     }
                 } else {
@@ -150,24 +155,29 @@ export const useTask = () => {
      * Delete Task
      */
     const deleteSelectedTask = useCallback((props: Props) => {
-        const { arrayId = [] } = props;
+        const { arrayId = [], tasks = [], onClose = null } = props;
 
         setLoading(true);
         setDisabled(true);
         axios.post(`${protocol}//${hostName}/api/tasks/selected_delete`, {
             arrayId: arrayId,
         })
-        .then((res) => getMessage({ title: `${res.data.delete_count}件のタスクを削除中...`, status: "success" }))
+        .then((res) => {
+            let newTasks = tasks;
+            arrayId.map((id) => {
+                newTasks = newTasks.filter((task) => task.id !== Number(id));
+            })
+            setTasks(newTasks);
+            getMessage({ title: `${res.data.delete_count}件のタスクを削除中...`, status: "success" });
+        })
         .catch((err) => {
             getMessage({ title: "削除中にエラーが発生しました", status: "error" });
             console.log(err);
         })
         .finally(() => {
-            setTimeout(() => {
-                setLoading(false);
-                setDisabled(false);
-                location.reload();
-            }, 1000);
+            setLoading(false);
+            setDisabled(false);
+            onClose!();
         });
     }, []);
 
