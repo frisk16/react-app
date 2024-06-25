@@ -3,11 +3,11 @@ import { FC, ReactNode } from "react";
 
 type Props = {
     children: ReactNode;
-    fontSize?: string;
+    fontSize?: {};
 };
 
 export const TagBadge: FC<Props> = (props) => {
-    const { children, fontSize = "0.8em" } = props;
+    const { children, fontSize = { base: "0.8em", lg: "0.8em" } } = props;
 
     return <Badge variant="outline" colorScheme="teal" fontSize={fontSize}>{children}</Badge>;
 }

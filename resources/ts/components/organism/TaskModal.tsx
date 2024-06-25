@@ -1,4 +1,4 @@
-import { Checkbox, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Stack, Text } from "@chakra-ui/react";
+import { Checkbox, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Stack, Text } from "@chakra-ui/react";
 import { ChangeEvent, FC, memo, useEffect, useState } from "react";
 import { DangerButton } from "../atom/DangerButton";
 import { PrimaryButton } from "../atom/PrimaryButton";
@@ -16,22 +16,22 @@ import { TitleText } from "../atom/TitleText";
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    onChangeSearchInput: (e: ChangeEvent<HTMLInputElement>) => void;
-    keyword: string;
+    status: string;
+    onChangeSearchInput?: (e: ChangeEvent<HTMLInputElement>) => void;
+    keyword?: string;
     arrayId?: Array<string>;
-    status?: string;
     id?: number;
     csrf?: string;
-    tasks: Array<Task>;
+    tasks?: Array<Task>;
     tags?: Array<Tag>;
     tagTaskLists?: Array<TagTask>;
     toggleTag?: ({}) => void;
-    addTask: ({}) => void;
-    deleteSelectedTask: ({}) => void;
+    addTask?: ({}) => void;
+    deleteSelectedTask?: ({}) => void;
 };
 
 export const TaskModal: FC<Props> = memo((props) => {
-    const { isOpen, onClose, onChangeSearchInput, keyword, arrayId, status = "", id = 0, csrf = "", tasks, tags = null, tagTaskLists = null, toggleTag = null, addTask, deleteSelectedTask } = props;
+    const { isOpen, onClose, onChangeSearchInput = null, keyword = "", arrayId = null, status = "", id = 0, csrf = "", tasks = null, tags = null, tagTaskLists = null, toggleTag = null, addTask = null, deleteSelectedTask = null } = props;
 
     const { loading, disabled, setDisabled } = useTask();
     const { tagLoading, tagDisabled } = useTag();
@@ -88,7 +88,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                             </Stack>
                         </ModalBody>
                         <ModalFooter>
-                            <PrimaryButton onClick={() => addTask({ inputTitle, inputImportance, tasks, csrf })} loading={loading} disabled={disabled} width="100%">追加</PrimaryButton>
+                            <PrimaryButton onClick={() => addTask!({ inputTitle, inputImportance, tasks, csrf })} loading={loading} disabled={disabled} width="100%">追加</PrimaryButton>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
@@ -106,7 +106,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                             <p>選択した<span style={{ fontWeight: "bold", fontSize: "1.1em" }}>{arrayId?.length}件</span>の項目を全て削除します、よろしいですか？</p>
                         </ModalBody>
                         <ModalFooter>
-                            <DangerButton onClick={() => deleteSelectedTask({ arrayId, tasks, onClose })} loading={loading} disabled={disabled ?? !arrayId} width="100%">全て削除</DangerButton>
+                            <DangerButton onClick={() => deleteSelectedTask!({ arrayId, tasks, onClose })} loading={loading} disabled={disabled ?? !arrayId} width="100%">全て削除</DangerButton>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
@@ -130,7 +130,32 @@ export const TaskModal: FC<Props> = memo((props) => {
                             </Stack>
                         </ModalBody>
                         <ModalFooter>
-                            <PrimaryButton onClick={() => toggleTag !== null && toggleTag({ csrf, tagIds, id, tagTaskLists })} loading={tagLoading} disabled={tagDisabled} width="100%">変更</PrimaryButton>
+                            <PrimaryButton onClick={() => toggleTag !== null && toggleTag({ csrf, tagIds, id, tagTaskLists })} loading={tagLoading} disabled={tags === null || tagDisabled} width="100%">変更</PrimaryButton>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            )}
+
+            {status === "deleteTag" && (
+                <Modal isOpen={isOpen} onClose={onClose} autoFocus={false}>
+                    <ModalOverlay />
+                    <ModalContent mx={{ base: 4, lg: "none" }} borderRadius={0}>
+                        <ModalHeader bg="gray.100">
+                            <TitleText>タグを削除します、よろしいですか？</TitleText>
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody pt={4}>
+                            {tags?.map((tag) => (
+                                tag.id === id && (
+                                    <Flex alignItems="center" gap={4}>
+                                        <Text>ID: {tag.id}</Text>
+                                        <TagBadge fontSize={{ base: "1em" }}>{tag.name}</TagBadge>
+                                    </Flex>
+                                )
+                            ))}
+                        </ModalBody>
+                        <ModalFooter>
+                            <DangerButton width="100%" onClick={() => {}}>削除</DangerButton>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
@@ -153,7 +178,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                             <FormControl>
                                 <FormLabel>タスク検索</FormLabel>
                                 <Stack spacing={4}>
-                                    <Input border="1px solid #aaa" onChange={onChangeSearchInput} defaultValue={keyword} />
+                                    <Input border="1px solid #aaa" onChange={onChangeSearchInput!} defaultValue={keyword} />
                                     <SearchButton keyword={keyword} width="100%">検索</SearchButton>
                                 </Stack>
                             </FormControl>

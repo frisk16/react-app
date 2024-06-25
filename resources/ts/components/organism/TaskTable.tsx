@@ -1,9 +1,8 @@
 import { Box, Card, CardBody, CardFooter, CardHeader, Checkbox, CloseButton, Divider, Flex, FormControl, FormLabel, Input, Stack, Text } from "@chakra-ui/react";
-import { ChangeEvent, FC, memo, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, FC, memo, useCallback, useEffect } from "react";
 import { Task } from "../../types/api/task";
 import { Tag } from "../../types/api/tag";
 import { DangerButton } from "../atom/DangerButton";
-import { PrimaryButton } from "../atom/PrimaryButton";
 import { DisplayLoading } from "../molecule/DisplayLoading";
 import { TagLists } from "../molecule/TagLists";
 import { SuccessButton } from "../atom/SuccessButton";
@@ -16,6 +15,8 @@ import { SelectForm } from "../atom/form/SelectForm";
 import { EditButton } from "../atom/EditButton";
 import { TagEditButton } from "../atom/TagEditButton";
 import { TitleText } from "../atom/TitleText";
+import { AddButton } from "../atom/AddButton";
+import { useSelectModal } from "../../hooks/modal/useSelectModal";
 
 type Props = {
     csrfToken: string;
@@ -37,18 +38,16 @@ type Props = {
 export const TaskTable: FC<Props> = memo((props) => {
     const { csrfToken, tasks, tags, tagTaskLists, isOpen, onOpen, onClose, addTask, editTask, deleteSelectedTask, toggleTag, loading, onChangeSearchInput, keyword } = props;
     
-    const [modalStatus, setModalStatus] = useState("");
-    const [modalId, setModalId] = useState(0);
+    const { modalStatus, modalId, onSelectModal } = useSelectModal();
     const { editTitle, editImportance, editCompleted, selectedId, setSelectedId, onChangeEditTitle, onChangeEditImportance, onChangeEditCompleted, onChangeCheckbox, setDefaultForms } = useTopForm();
     const { targetId, activeForm, onClickToggleForm } = useActiveForm();
 
     useEffect(() => setSelectedId([]), [tasks]);
 
-    const onOpenTaskModal = useCallback((status: string, id?: number) => {
-        setModalStatus(status);
-        id && setModalId(id);
+    const onClickOpenModal = useCallback((status: string, id?: number) => {
+        onSelectModal({ status, id });
         onOpen();
-    }, [modalStatus]);
+    }, []);
 
     const onClickEditAction = useCallback((id: number) => {
         setDefaultForms();
@@ -59,10 +58,10 @@ export const TaskTable: FC<Props> = memo((props) => {
         <>
 
             <Flex justifyContent={{ base: "space-between", lg: "end" }} me={8} my={{ base: 4, lg: 8 }}>
-                <HamburgerIcon as="button" onClick={() => onOpenTaskModal("tagMenu")} fontSize={28} me="auto" ms={8} cursor="pointer" display={{ base: "block", lg: "none" }} />
+                <HamburgerIcon as="button" onClick={() => onClickOpenModal("tagMenu")} fontSize={28} me="auto" ms={8} cursor="pointer" display={{ base: "block", lg: "none" }} />
                 <Flex gap={2}>
-                    {selectedId[0] && <DangerButton onClick={() => onOpenTaskModal("deleteSelectedTask")}>選択項目を削除</DangerButton>}
-                    <PrimaryButton onClick={() => onOpenTaskModal("addTask")}>タスク追加</PrimaryButton>
+                    {selectedId[0] && <DangerButton onClick={() => onClickOpenModal("deleteSelectedTask")}>選択項目を削除</DangerButton>}
+                    <AddButton onClick={() => onClickOpenModal("addTask")}>タスク追加</AddButton>
                 </Flex>
             </Flex>
             {
@@ -131,7 +130,7 @@ export const TaskTable: FC<Props> = memo((props) => {
                                             <Text fontSize="0.8em">タグ：</Text>
                                             <TagLists tags={tags} tagTaskLists={tagTaskLists} taskId={task.id} />
                                             <Box position="absolute" right={0}>
-                                                <TagEditButton onClick={() => onOpenTaskModal("settingTag", task.id)}>タグ編集</TagEditButton>
+                                                <TagEditButton onClick={() => onClickOpenModal("settingTag", task.id)}>タグ編集</TagEditButton>
                                             </Box>
                                         </Flex>
                                     </CardFooter>
