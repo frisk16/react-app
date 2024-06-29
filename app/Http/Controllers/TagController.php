@@ -54,50 +54,59 @@ class TagController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Tag Data Count
      */
-    public function create()
+    public function tags_count()
     {
-        //
+        // 
+        $tags = Tag::all();
+        $tag_data_counts = [];
+        foreach($tags as $tag) {
+            $tag_data_counts[] = [
+                'tagId' => $tag->id,
+                'count' => $tag->tasks()->count()
+            ];
+        }
+
+        $response = [
+            'tagCount' => $tag_data_counts,
+        ];
+
+        return response()->json($response);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Add Tag
      */
-    public function store(Request $request)
+    public function add_tag(Request $request)
     {
-        //
+        // 
+        $tag = new Tag();
+        $tag->name = $request->input('tagName');
+        $tag->save();
+
+        $response = [
+            'tagName' => $request->input('tagName')
+        ];
+
+        return response()->json($response);
     }
 
     /**
-     * Display the specified resource.
+     * Delete Tag
      */
-    public function show(Tag $tag)
+    public function delete_tag($id)
     {
-        //
+        // 
+        $tag = Tag::find($id);
+        $tag_name = $tag->name;
+        $tag->delete();
+
+        $response = [
+            'tagName' => $tag_name
+        ];
+
+        return response()->json($response);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Tag $tag)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Tag $tag)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Tag $tag)
-    {
-        //
-    }
 }

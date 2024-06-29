@@ -1,5 +1,5 @@
-import { Box, Card, CardBody, CardHeader, Center, Grid, GridItem, Wrap, WrapItem, useDisclosure } from "@chakra-ui/react";
-import { FC, memo, useCallback, useEffect, useState } from "react";
+import { Box, Card, CardBody, CardHeader, Center, Grid, GridItem, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useDisclosure } from "@chakra-ui/react";
+import { FC, memo, useCallback, useEffect } from "react";
 import { AddButton } from "../atom/AddButton";
 import { useTag } from "../../hooks/useTag";
 import { TitleText } from "../atom/TitleText";
@@ -9,7 +9,7 @@ import { TaskModal } from "./TaskModal";
 import { useSelectModal } from "../../hooks/modal/useSelectModal";
 
 export const TagSettingComponent: FC = memo(() => {
-    const { getTags, tags } = useTag();
+    const { getTags, tags, getCounts, tagCounts } = useTag();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { modalStatus, modalId, onSelectModal } = useSelectModal();
 
@@ -19,6 +19,7 @@ export const TagSettingComponent: FC = memo(() => {
     }, []);
 
     useEffect(() => getTags, []);
+    useEffect(() => getCounts, []);
 
     return (
         <>
@@ -29,20 +30,42 @@ export const TagSettingComponent: FC = memo(() => {
             <Grid templateColumns="repeat(4, 1fr)">
                 <GridItem mx={{ base: 4, lg: 0 }} colStart={{ base: 1, lg: 2 }} colSpan={{ base: 4, lg: 2 }}>
                     <Card>
-                        <CardHeader>
+                        <CardHeader p={0}>
                             <Box float="right">
-                                <AddButton onClick={() => {}}>追加</AddButton>
+                                <AddButton borderRadius="0 6px 0 0" onClick={() => onClickOpenModal("addTag")}>追加</AddButton>
                             </Box>
                         </CardHeader>
                         <CardBody>
-                            <Wrap>
-                                {tags.map((tag) => (
-                                    <WrapItem key={tag.id} alignItems="center" gap={2} me={6}>
-                                        <TagBadge fontSize={{ base: "1em", lg: "1.3em" }}>{tag.name}</TagBadge>
-                                        <CloseIcon cursor="pointer" onClick={() => onClickOpenModal("deleteTag", tag.id)} />
-                                    </WrapItem>
-                                ))}
-                            </Wrap>
+                            <TableContainer>
+                                <Table>
+                                    <Thead>
+                                        <Tr>
+                                            <Th>タグ名</Th>
+                                            <Th>タスク数</Th>
+                                            <Th>削除</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
+                                        {tags.map((tag) => (
+                                            <Tr key={tag.id}>
+                                                <Td>
+                                                    <TagBadge fontSize={{ base: "1em", lg: "1.2em" }}>{tag.name}</TagBadge>
+                                                </Td>
+                                                <Td>
+                                                    {tagCounts.map((countData) => (
+                                                        countData.tagId === tag.id && (
+                                                            <p key={countData.tagId}>{countData.count}</p>
+                                                        )
+                                                    ))}
+                                                </Td>
+                                                <Td>
+                                                    <CloseIcon cursor="pointer" onClick={() => onClickOpenModal("deleteTag", tag.id)} />
+                                                </Td>
+                                            </Tr>
+                                        ))}
+                                    </Tbody>
+                                </Table>
+                            </TableContainer>
                         </CardBody>
                     </Card>
                 </GridItem>

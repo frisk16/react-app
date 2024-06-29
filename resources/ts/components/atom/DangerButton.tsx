@@ -7,10 +7,11 @@ type Props = {
     disabled?: boolean;
     loading?: boolean;
     width?: string;
+    size?: {};
 };
 
 export const DangerButton: FC<Props> = (props) => {
-    const { children, onClick, disabled = false, loading = false, width = "none" } = props;
+    const { children, onClick, disabled = false, loading = false, width = "none", size = { base: "sm", lg: "md" } } = props;
 
-    return <Button w={width} size={{ base: "sm", lg: "md" }} onClick={onClick} isDisabled={disabled} isLoading={loading} bg="red.400" _hover={{opacity: 0.7}} color="white">{children}</Button>
+    return <Button w={width} size={size} onClick={onClick} isDisabled={disabled} isLoading={loading} bg="red.400" _hover={{opacity: 0.7}} color="white">{children}</Button>
 }

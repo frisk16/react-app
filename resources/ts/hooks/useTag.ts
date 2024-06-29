@@ -3,12 +3,14 @@ import { Tag } from "../types/api/tag";
 import axios from "axios";
 import { useMessage } from "./useMessage";
 import { TagTask } from "../types/api/tagTask";
+import { TagCount } from "../types/api/tagCount";
 
 type Props = {
     csrf?: string;
     tagIds?: Array<string>;
     tagTaskLists?: Array<TagTask>;
     id?: number;
+    tagName?: string;
 };
 
 export const useTag = () => {
@@ -17,6 +19,7 @@ export const useTag = () => {
     const { getMessage } = useMessage();
     const [tagLoading, setTagLoading] = useState(false);
     const [tagDisabled, setTagDisabled] = useState(false);
+    const [tagCounts, setTagCounts] = useState<Array<TagCount>>([]);
     let hostName = new URL(window.location.href).host;
     let protocol = new URL(window.location.href).protocol;
     
@@ -71,5 +74,21 @@ export const useTag = () => {
         });
     }, []);
 
-    return { tags, getTags, getTagTaskLists, tagTaskLists, toggleTag, tagLoading, tagDisabled };
+    const getCounts = useCallback(() => {
+        axios.get(`${protocol}//${hostName}/api/tags/count`)
+            .then((res) => setTagCounts(res.data.tagCount))
+            .catch((err) => console.log(err));
+    }, []);
+
+    const addTag = useCallback((props: Props) => {
+        const { csrf = "", tagName = "" } = props;
+
+    }, []);
+
+    const deleteTag = useCallback((props: Props) => {
+        const { csrf = "", id = null } = props;
+
+    }, []);
+
+    return { tags, getTags, getTagTaskLists, tagTaskLists, toggleTag, tagLoading, tagDisabled, getCounts, tagCounts, setTagDisabled };
 }

@@ -6,10 +6,11 @@ type Props = {
     children: ReactNode;
     onClick: () => void;
     disabled?: boolean;
+    size?: {};
 };
 
 export const SettingButton: FC<Props> = (props) => {
-    const { children, onClick, disabled = false } = props;
+    const { children, onClick, disabled = false, size = { base: "sm", lg: "md" } } = props;
 
-    return <Button rightIcon={<MdBuild />} size={{ base: "sm", lg: "md" }} bg="gray.500" _hover={{ opacity: 0.7 }} color="white" onClick={onClick} isDisabled={disabled}>{children}</Button>
+    return <Button rightIcon={<MdBuild />} size={size} bg="gray.500" _hover={{ opacity: 0.7 }} color="white" onClick={onClick} isDisabled={disabled}>{children}</Button>
 }

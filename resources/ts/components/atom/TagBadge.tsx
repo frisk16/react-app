@@ -9,5 +9,5 @@ type Props = {
 export const TagBadge: FC<Props> = (props) => {
     const { children, fontSize = { base: "0.8em", lg: "0.8em" } } = props;
 
-    return <Badge variant="outline" colorScheme="teal" fontSize={fontSize}>{children}</Badge>;
+    return <Badge p={1} variant="outline" colorScheme="teal" fontSize={fontSize}>{children}</Badge>;
 }
