@@ -30,9 +30,8 @@ export const ParentTaskComponent: FC<Props> = memo((props) => {
     useEffect(() => {
         getToken();
         getTags();
-        console.log(tags);
     }, []);
-    useEffect(() => getTagTaskLists, [toggleTag]);
+    useEffect(() => getTagTaskLists(), [toggleTag]);
     
     return (
         <>
