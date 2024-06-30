@@ -14,7 +14,7 @@ class TagController extends Controller
     public function index()
     {
         //
-        $tags = Tag::all();
+        $tags = Tag::orderBy('created_at', 'DESC')->get();
         
         $response = [
             'tags' => $tags,
@@ -81,12 +81,13 @@ class TagController extends Controller
     public function add_tag(Request $request)
     {
         // 
-        $tag = new Tag();
-        $tag->name = $request->input('tagName');
-        $tag->save();
+        $tag = Tag::create([
+            'name' => $request->input('tagName'),
+        ]);
 
         $response = [
-            'tagName' => $request->input('tagName')
+            'tagName' => $tag->name,
+            'tag' => $tag
         ];
 
         return response()->json($response);

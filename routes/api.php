@@ -31,7 +31,7 @@ Route::controller(TaskController::class)->group(function () {
 Route::controller(TagController::class)->group(function () {
     Route::get('/tags', 'index');
     Route::get('/tags/{id}/task_datas', 'task_datas');
-    Route::delete('/tags/{id}/delete_tag', 'delete_tag');
+    Route::delete('/tags/{id}/delete', 'delete_tag');
     Route::post('/tags/add', 'add_tag');
     Route::get('/tags/tag_task_lists', 'tag_task_lists');
     Route::get('/tags/count', 'tags_count');

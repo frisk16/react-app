@@ -9,8 +9,10 @@ type Props = {
     csrf?: string;
     tagIds?: Array<string>;
     tagTaskLists?: Array<TagTask>;
+    tags?: Array<Tag>;
     id?: number;
     tagName?: string;
+    onClose?: () => void;
 };
 
 export const useTag = () => {
@@ -54,7 +56,6 @@ export const useTag = () => {
         {
             headers: {
                 "X-CSRF-TOKEN": csrf,
-                "X-HTTP-Method-Override": "PUT",
             }
         })
         .then((res) => {
@@ -81,14 +82,57 @@ export const useTag = () => {
     }, []);
 
     const addTag = useCallback((props: Props) => {
-        const { csrf = "", tagName = "" } = props;
+        const { csrf = "", tagName = "", tags = [] } = props;
 
+        setTagLoading(true);
+        setTagDisabled(true);
+        axios.post(`${protocol}//${hostName}/api/tags/add`, {
+            tagName
+        },{
+            headers: {
+                "X-CSRF-TOKEN": csrf,
+            }
+        })
+        .then((res) => {
+            const newTags = [res.data.tag, ...tags];
+            setTags(newTags);
+            getMessage({ title: "タグを追加しました", status: "success" });
+        })
+        .catch((err) => {
+            getMessage({ title: "タグ追加中にエラーが発生しました", status: "error" });
+            console.log(err);
+        })
+        .finally(() => {
+            setTagLoading(false);
+            setTagDisabled(false);
+        });
     }, []);
 
     const deleteTag = useCallback((props: Props) => {
-        const { csrf = "", id = null } = props;
+        const { csrf = "", id = null, tags = [], onClose = null } = props;
 
+        setTagLoading(true);
+        setTagDisabled(true);
+        axios.delete(`${protocol}//${hostName}/api/tags/${id}/delete`, {
+            headers: {
+                "X-CSRF-TOKEN": csrf
+            }
+        })
+        .then((res) => {
+            const newTags = tags.filter((tag) => tag.id !== id);
+            setTags(newTags);
+            getMessage({ title: `「${res.data.tagName}」を削除しました`, status: "success" });
+        })
+        .catch((err) => {
+            getMessage({ title: "削除中にエラーが発生しました", status: "error" });
+            console.log(err);
+        })
+        .finally(() => {
+            setTagLoading(false);
+            setTagDisabled(false);
+            onClose!();
+        });
     }, []);
 
-    return { tags, getTags, getTagTaskLists, tagTaskLists, toggleTag, tagLoading, tagDisabled, getCounts, tagCounts, setTagDisabled };
+    return { tags, getTags, getTagTaskLists, tagTaskLists, toggleTag, tagLoading, tagDisabled, getCounts, tagCounts, setTagDisabled, addTag, deleteTag };
 }

@@ -30,10 +30,12 @@ type Props = {
     toggleTag?: ({}) => void;
     addTask?: ({}) => void;
     deleteSelectedTask?: ({}) => void;
+    addTag?: ({}) => void;
+    deleteTag?: ({}) => void;
 };
 
 export const TaskModal: FC<Props> = memo((props) => {
-    const { isOpen, onClose, onChangeSearchInput = null, keyword = "", arrayId = null, status = "", id = 0, csrf = "", tasks = null, tags = null, tagTaskLists = null, toggleTag = null, addTask = null, deleteSelectedTask = null } = props;
+    const { isOpen, onClose, onChangeSearchInput = null, keyword = "", arrayId = null, status = "", id = 0, csrf = "", tasks = null, tags = null, tagTaskLists = null, toggleTag = null, addTask = null, deleteSelectedTask = null, addTag = null, deleteTag = null } = props;
 
     const { loading, disabled, setDisabled } = useTask();
     const { tagLoading, tagDisabled, setTagDisabled } = useTag();
@@ -122,7 +124,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                         </ModalBody>
                         <ModalFooter>
                             <DangerButton
-                                onClick={() => deleteSelectedTask!({ arrayId, tasks, onClose })}
+                                onClick={() => deleteSelectedTask!({ csrf, arrayId, tasks, onClose })}
                                 loading={loading}
                                 disabled={disabled ?? !arrayId}
                                 width="100%"
@@ -176,7 +178,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                                 tag.id === id && (
                                     <Flex alignItems="center" gap={4}>
                                         <Text>ID: {tag.id}</Text>
-                                        <TagBadge fontSize={{ base: "1em" }}>{tag.name}</TagBadge>
+                                        <TagBadge fontSize={{ base: "0.8em" }}>{tag.name}</TagBadge>
                                     </Flex>
                                 )
                             ))}
@@ -184,7 +186,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                         <ModalFooter>
                             <DangerButton
                                 width="100%"
-                                onClick={() => {}}
+                                onClick={() => deleteTag!({ csrf, id, tags, onClose })}
                                 size={{ base: "md" }}
                             >削除</DangerButton>
                         </ModalFooter>
@@ -210,7 +212,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                         </ModalBody>
                         <ModalFooter>
                             <PrimaryButton
-                                onClick={() => {}}
+                                onClick={() => addTag!({ csrf, tagName, tags })}
                                 loading={tagLoading}
                                 disabled={tagDisabled}
                                 width="100%"

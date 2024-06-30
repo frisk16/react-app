@@ -9,7 +9,7 @@ import { TaskModal } from "./TaskModal";
 import { useSelectModal } from "../../hooks/modal/useSelectModal";
 
 export const TagSettingComponent: FC = memo(() => {
-    const { getTags, tags, getCounts, tagCounts } = useTag();
+    const { getTags, tags, getCounts, tagCounts, addTag, deleteTag } = useTag();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { modalStatus, modalId, onSelectModal } = useSelectModal();
 
@@ -18,8 +18,10 @@ export const TagSettingComponent: FC = memo(() => {
         onOpen();
     }, []);
 
-    useEffect(() => getTags, []);
-    useEffect(() => getCounts, []);
+    useEffect(() => {
+        getTags();
+        getCounts();
+    }, [addTag, deleteTag]);
 
     return (
         <>
@@ -49,7 +51,7 @@ export const TagSettingComponent: FC = memo(() => {
                                         {tags.map((tag) => (
                                             <Tr key={tag.id}>
                                                 <Td>
-                                                    <TagBadge fontSize={{ base: "1em", lg: "1.2em" }}>{tag.name}</TagBadge>
+                                                    <TagBadge fontSize={{ base: "1em" }}>{tag.name}</TagBadge>
                                                 </Td>
                                                 <Td>
                                                     {tagCounts.map((countData) => (
@@ -71,7 +73,7 @@ export const TagSettingComponent: FC = memo(() => {
                 </GridItem>
             </Grid>
 
-            <TaskModal isOpen={isOpen} onClose={onClose} status={modalStatus} id={modalId} tags={tags} />
+            <TaskModal isOpen={isOpen} onClose={onClose} status={modalStatus} id={modalId} tags={tags} addTag={addTag} deleteTag={deleteTag} />
         </>
     )
 })

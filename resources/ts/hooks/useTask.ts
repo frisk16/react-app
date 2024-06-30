@@ -92,7 +92,7 @@ export const useTask = () => {
         })
         .then((res) => {
             setTasks([res.data.task, ...tasks]);
-            getMessage({ title: `タスクを追加中...：${res.data.title}`, status: "success" });
+            getMessage({ title: `タスクを追加しました：${res.data.title}`, status: "success" });
         })
         .catch((err) => {
             getMessage({ title: "追加時にエラーが発生しました", status: "error" });
@@ -121,7 +121,6 @@ export const useTask = () => {
         }, {
             headers: {
                 "X-CSRF-TOKEN": csrf,
-                "X-HTTP-Method-Override": "PUT"
             },
         })
         .then((res) => {
@@ -155,12 +154,16 @@ export const useTask = () => {
      * Delete Task
      */
     const deleteSelectedTask = useCallback((props: Props) => {
-        const { arrayId = [], tasks = [], onClose = null } = props;
+        const { csrf = "", arrayId = [], tasks = [], onClose = null } = props;
 
         setLoading(true);
         setDisabled(true);
         axios.post(`${protocol}//${hostName}/api/tasks/selected_delete`, {
             arrayId: arrayId,
+        },{
+            headers: {
+                "X-CSRF-TOKEN": csrf
+            }
         })
         .then((res) => {
             let newTasks = tasks;
@@ -168,7 +171,7 @@ export const useTask = () => {
                 newTasks = newTasks.filter((task) => task.id !== Number(id));
             })
             setTasks(newTasks);
-            getMessage({ title: `${res.data.delete_count}件のタスクを削除中...`, status: "success" });
+            getMessage({ title: `${res.data.delete_count}件のタスクを削除しました`, status: "success" });
         })
         .catch((err) => {
             getMessage({ title: "削除中にエラーが発生しました", status: "error" });
