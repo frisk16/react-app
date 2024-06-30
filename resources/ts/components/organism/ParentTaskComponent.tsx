@@ -27,8 +27,11 @@ export const ParentTaskComponent: FC<Props> = memo((props) => {
     useEffect(() => {
         tagId ? getTagDatas({ tagId, pageParam }) : getTasks({ keywordParam, pageParam });
     }, [addTask, editTask, deleteSelectedTask]);
-    useEffect(() => getToken, []);
-    useEffect(() => getTags, []);
+    useEffect(() => {
+        getToken();
+        getTags();
+        console.log(tags);
+    }, []);
     useEffect(() => getTagTaskLists, [toggleTag]);
     
     return (

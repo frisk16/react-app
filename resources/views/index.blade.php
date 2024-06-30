@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     
     <title>React App</title>
-    @viteReactRefresh
     @vite([
         'resources/css/app.css',
         'resources/ts/index.tsx'
