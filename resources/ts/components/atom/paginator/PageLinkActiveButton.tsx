@@ -8,5 +8,5 @@ type Props = {
 export const PageLinkActiveButton: FC<Props> = memo((props) => {
     const { children } = props;
 
-    return <Button _hover={{}} bg="teal" color="#fff" borderRadius={0}>{children}</Button>
+    return <Button _hover={{}} size={{ base: "sm", lg: "md" }} bg="teal" color="#fff" borderRadius={0}>{children}</Button>
 })

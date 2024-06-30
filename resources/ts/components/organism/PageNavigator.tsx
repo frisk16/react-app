@@ -17,7 +17,7 @@ export const PageNavigator: FC<Props> = memo((props) => {
     const { paginator, keyword } = props;
 
     return (
-        <Flex my={8} justifyContent="center">
+        <Flex my={8} justifyContent="center" mx={4}>
             <LinkBox>
                 {paginator?.current_page === 1 ? (
                     <PrevPageActiveButton>&laquo;</PrevPageActiveButton>

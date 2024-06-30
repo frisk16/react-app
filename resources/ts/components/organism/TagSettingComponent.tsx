@@ -7,9 +7,10 @@ import { TagBadge } from "../atom/TagBadge";
 import { CloseIcon } from "@chakra-ui/icons";
 import { TaskModal } from "./TaskModal";
 import { useSelectModal } from "../../hooks/modal/useSelectModal";
+import { DisplayLoading } from "../molecule/DisplayLoading";
 
 export const TagSettingComponent: FC = memo(() => {
-    const { getTags, tags, getCounts, tagCounts, addTag, deleteTag } = useTag();
+    const { getTags, tags, getCounts, tagCounts, addTag, deleteTag, tagLoading } = useTag();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { modalStatus, modalId, onSelectModal } = useSelectModal();
 
@@ -28,6 +29,10 @@ export const TagSettingComponent: FC = memo(() => {
             <Center py={4}>
                 <TitleText>タグ設定</TitleText>
             </Center>
+
+            {tagLoading && (
+                <DisplayLoading />
+            )}
             
             <Grid templateColumns="repeat(4, 1fr)">
                 <GridItem mx={{ base: 4, lg: 0 }} colStart={{ base: 1, lg: 2 }} colSpan={{ base: 4, lg: 2 }}>

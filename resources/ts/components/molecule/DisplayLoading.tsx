@@ -1,16 +1,15 @@
 import { Center, Spinner } from "@chakra-ui/react";
 import { FC } from "react";
 
-type Props = {
-    height: string;
-}
-
-export const DisplayLoading: FC<Props> = (props) => {
-    const { height } = props;
-
+export const DisplayLoading: FC = () => {
     return (
-        <Center h={height}>
-            <Spinner />
+        <Center position="fixed" inset={0} zIndex={10} backgroundColor="rgba(200, 200, 200, 0.5)">
+            <Spinner
+                thickness="5px"
+                size="xl"
+                color="blue.400"
+                emptyColor="gray.300"
+            />
         </Center>
     )
 }

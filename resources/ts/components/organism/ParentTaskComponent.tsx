@@ -68,9 +68,7 @@ export const ParentTaskComponent: FC<Props> = memo((props) => {
                 </GridItem>
             </Grid>
             
-            <Center>
-                <PageNavigator paginator={tasksPaginator} keyword={keyword} />
-            </Center>
+            <PageNavigator paginator={tasksPaginator} keyword={keyword} />
         </>
     )
 })

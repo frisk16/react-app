@@ -26,12 +26,14 @@ export const useTag = () => {
     let protocol = new URL(window.location.href).protocol;
     
     const getTags = useCallback(() => {
+        setTagLoading(true);
         axios.get(`${protocol}//${hostName}/api/tags`)
             .then((res) => setTags(res.data.tags))
             .catch((err) => {
                 getMessage({ title: "タグを取得できませんでした", status: "error" });
                 console.log(err);
-            });
+            })
+            .finally(() => setTagLoading(false));
     }, []);
 
     const getTagTaskLists = useCallback(() => {
