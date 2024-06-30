@@ -145,7 +145,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                         <ModalCloseButton />
                         <ModalBody>
                             <Stack spacing={4} direction="row">
-                                {tags?.map((tag) => (
+                                {tags!.map((tag) => (
                                     <Checkbox key={tag.id} onChange={onChangeTagCheckbox} value={tag.id}>
                                         <TagBadge fontSize="1em">{tag.name}</TagBadge>
                                     </Checkbox>
@@ -156,7 +156,7 @@ export const TaskModal: FC<Props> = memo((props) => {
                             <PrimaryButton
                                 onClick={() => toggleTag!({ csrf, tagIds, id, tagTaskLists })}
                                 loading={tagLoading}
-                                disabled={!tags || tagDisabled}
+                                disabled={tags === null || tagDisabled}
                                 width="100%"
                                 size={{ base: "md" }}
                             >変更</PrimaryButton>
